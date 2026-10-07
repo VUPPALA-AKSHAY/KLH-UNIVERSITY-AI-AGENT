@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLH Smart AI Assistant</title>
+    <meta name="description"
+        content="Get instant answers about KLH University - admissions, fees, courses, and more using AI-powered chat.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.v3.css?v=4.9">
+    <link rel="stylesheet" href="scrolly.css?v=scroll-cue-305">
+    <link rel="icon" type="image/png" href="icons/klh-logo-v3.png">
+</head>
+
+<body>
+
+    <!-- ══════════════════════════════════════════════════
+         SCROLLY INTRO — GPU Canvas Frame Animation
+         800vh of scroll drives 300 frames from klh-intro.mp4
+    ══════════════════════════════════════════════════ -->
+
+    <!-- Scroll spacer: height set by scrolly.js to 800vh -->
+    <div id="sc-spacer"></div>
+
+    <!-- Fixed WebGL canvas wrapper -->
+    <div id="sc-wrapper">
+        <canvas id="sc-canvas"></canvas>
+
+        <!-- Scroll hint (appears after load) -->
+        <div id="sc-hint">
+            <span class="sc-hint-text">Scroll Down</span>
+            <div class="sc-arrow-group">
+                <div class="sc-arrow"></div>
+                <div class="sc-arrow"></div>
+                <div class="sc-arrow"></div>
+            </div>
+        </div>
+
+        <!-- Skip button -->
+        <button id="sc-skip">Skip Intro &rsaquo;</button>
+
+        <!-- Thin progress strip at bottom -->
+        <div id="sc-progress-strip"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         MAIN CHAT UI — hidden until intro completes
+    ══════════════════════════════════════════════════ -->
+    <div class="app-layout" style="display:none;opacity:0;transition:opacity 0.8s ease;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <div class="logo-icon">
+                    <img src="icons/klh-logo-v3.png" alt="KLH Logo" class="sidebar-logo-img">
+                </div>
+                <span class="logo-text">KLH AI</span>
+                <span class="beta-badge">BETA</span>
+            </div>
+
+            <!-- New Chat Button -->
+            <button class="new-chat-btn" id="newChatBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                <span>New Chat</span>
+            </button>
+
+            <!-- Theme Toggle -->
+            <button class="theme-toggle-btn" id="themeToggle">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span>Light Mode</span>
+            </button>
+
+            <!-- Quick Links Sections -->
+            <div class="sidebar-scroll">
+                <!-- About KLH -->
+                <div class="sidebar-section">
+                    <h3 class="section-label">General</h3>
+                    <div class="links-list">
+                        <a href="https://klh.edu.in/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg></span>
+                            <span>Homepage</span>
+                        </a>
+                        <a href="https://klh.edu.in/vision-mission/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <circle cx="12" cy="12" r="6"></circle>
+                                    <circle cx="12" cy="12" r="2"></circle>
+                                </svg></span>
+                            <span>Vision & Mission</span>
+                        </a>
+                        <a href="https://klh.edu.in/achievements-awards/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                    <path
+                                        d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                    </path>
+                                    <rect x="6" y="14" width="12" height="8"></rect>
+                                </svg></span>
+                            <span>Achievements</span>
+                        </a>
+                        <a href="https://klh.edu.in/academic-collaborations/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg></span>
+                            <span>Collaborations</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Academics & Admissions -->
+                <div class="sidebar-section">
+                    <h3 class="section-label">Academics</h3>
+                    <div class="links-list">
+                        <a href="https://klh.edu.in/admissions/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                    </path>
+                                </svg></span>
+                            <span>Admissions</span>
+                        </a>
+                        <a href="https://klh.edu.in/programs-at-klh/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg></span>
+                            <span>Programs</span>
+                        </a>
+                        <a href="https://klh.edu.in/placements/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                    <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                                </svg></span>
+                            <span>Placements</span>
+                        </a>
+                        <a href="https://klh.edu.in/fee-structure/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                                </svg></span>
+                            <span>Fee Structure</span>
+                        </a>
+                        <a href="https://klh.edu.in/exam_home/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg></span>
+                            <span>Exam Section</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="sidebar-section">
+                    <h3 class="section-label">Portals</h3>
+                    <div class="links-list">
+                        <a href="https://newerp.kluniversity.in/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                                </svg></span>
+                            <span>ERP Portal</span>
+                        </a>
+                        <a href="https://lms.klh.edu.in/" target="_blank">
+                            <span class="link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                </svg></span>
+                            <span>LMS</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/klh.edu.in/" target="_blank" title="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                        </svg>
+                    </a>
+                    <a href="https://twitter.com/klh.edu.in/" target="_blank" title="Twitter">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/klh.edu.in/" target="_blank" title="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                        </svg>
+                    </a>
+                    <a href="https://www.linkedin.com/school/klh-edu-in/" target="_blank" title="LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                            <rect x="2" y="9" width="4" height="12" />
+                            <circle cx="4" cy="4" r="2" />
+                        </svg>
+                    </a>
+                    <a href="https://www.youtube.com/klh/" target="_blank" title="YouTube">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
+                            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#000" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <button class="menu-btn" id="openSidebarBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div class="top-bar-right">
+                    <button class="icon-btn theme-toggle-topbar" id="themeToggleMobile" title="Toggle Theme">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                        </svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                        </svg>
+                        <span id="themeToggleText">Light Mode</span>
+                    </button>
+                    <button class="icon-btn user-btn" title="Profile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Area -->
+            <div class="chat-area" id="chatArea">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <!-- Blur Text Animation as Main Title -->
+                    <div class="blur-text-wrapper">
+                        <p class="blur-text-container" id="blurTextContainer"></p>
+                    </div>
+
+                    <!-- Main Input -->
+                    <div class="main-input-container">
+                        <div class="input-box">
+                            <div class="animated-placeholder" id="animatedPlaceholder">
+                                <span class="placeholder-text"></span>
+                            </div>
+                            <textarea id="messageInput" class="message-input" placeholder="" rows="1"
+                                autocomplete="off"></textarea>
+                        </div>
+                        <div class="input-actions">
+                            <div class="input-actions-left">
+                                <button class="action-icon-btn" title="Attach file">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                    </svg>
+                                </button>
+                                <button class="action-icon-btn" title="Settings">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="4" y1="21" x2="4" y2="14" />
+                                        <line x1="4" y1="10" x2="4" y2="3" />
+                                        <line x1="12" y1="21" x2="12" y2="12" />
+                                        <line x1="12" y1="8" x2="12" y2="3" />
+                                        <line x1="20" y1="21" x2="20" y2="16" />
+                                        <line x1="20" y1="12" x2="20" y2="3" />
+                                    </svg>
+                                </button>
+                                <button class="action-icon-btn" title="Share">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3" />
+                                        <circle cx="6" cy="12" r="3" />
+                                        <circle cx="18" cy="19" r="3" />
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                                    </svg>
+                                </button>
+                                <button class="voice-call-btn" id="voiceCallBtn" title="Voice Call">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path
+                                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="input-actions-right">
+                                <!-- Mode Selector (Fast/Thinking) -->
+                                <div class="mode-selector" id="modeSelector">
+                                    <button class="mode-selector-btn" id="modeSelectorBtn">
+                                        <span class="mode-name" id="selectedModeName">Fast</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            width="14" height="14">
+                                            <polyline points="6 9 12 15 18 9" />
+                                        </svg>
+                                    </button>
+                                    <div class="mode-dropdown" id="modeDropdown">
+                                        <div class="mode-option active" data-mode="fast">
+                                            <span class="mode-option-name">Fast</span>
+                                            <span class="mode-option-desc">University Data</span>
+                                        </div>
+                                        <div class="mode-option" data-mode="thinking">
+                                            <span class="mode-option-name">Thinking</span>
+                                            <span class="mode-option-desc">Web Search</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Model Selector Dropdown -->
+                                <div class="model-selector" id="modelSelector">
+                                    <button class="model-selector-btn" id="modelSelectorBtn">
+                                        <img id="selectedModelLogo" class="provider-img selected-model-logo" alt="" hidden>
+                                        <span class="model-name" id="selectedModelName">Mistral Small (Cloudflare)</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            width="14" height="14">
+                                            <polyline points="6 9 12 15 18 9" />
+                                        </svg>
+                                    </button>
+                                    <div class="model-dropdown" id="modelDropdown">
+                                        <!-- Search Input -->
+                                        <div class="model-search-container">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="11" cy="11" r="8"></circle>
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                            </svg>
+                                            <input type="text" id="modelSearchInput" class="model-search-input"
+                                                placeholder="Search model..." autocomplete="off">
+                                        </div>
+
+                                        <!-- Categories -->
+                                        <div class="model-list" id="modelList">
+<div class="model-option" data-model="cloudflare" data-name="Mistral Small (Cloudflare)">
+                                                    <span class="model-option-name">Mistral Small (Cloudflare)</span>
+                                                    <span class="model-option-desc">Cloudflare Workers AI</span>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="send-button" id="sendButton" aria-label="Send message">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 19V5M5 12l7-7 7 7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Facts (About Us Improvisation) - Aceternity Style -->
+                    <div class="quick-facts-grid">
+                        <!-- Card 1: About KLH -->
+                        <div class="fact-card-wrapper"
+                            onclick="document.getElementById('messageInput').value='Tell me about KLH University'; handleInputChange(); document.getElementById('sendButton').click();">
+                            <!-- Glow Effect Layers -->
+                            <div class="glow-border"></div>
+                            <div class="glow-blur"></div>
+                            <!-- Inner Content Card -->
+                            <div class="fact-card-content">
+                                <div class="fact-icon fact-icon-blue">
+                                    <span>i</span>
+                                </div>
+                                <div class="fact-text">
+                                    <h3>About KLH</h3>
+                                    <p>Premium deemed university with world-class education.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Placements -->
+                        <div class="fact-card-wrapper"
+                            onclick="document.getElementById('messageInput').value='What are the placements at KLH?'; handleInputChange(); document.getElementById('sendButton').click();">
+                            <!-- Glow Effect Layers -->
+                            <div class="glow-border"></div>
+                            <div class="glow-blur"></div>
+                            <!-- Inner Content Card -->
+                            <div class="fact-card-content">
+                                <div class="fact-icon fact-icon-green">
+                                    <span>✓</span>
+                                </div>
+                                <div class="fact-text">
+                                    <h3>Placements</h3>
+                                    <p>Consistent 100% placement track record with top MNCs.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Rankings -->
+                        <div class="fact-card-wrapper"
+                            onclick="document.getElementById('messageInput').value='What is the NIRF ranking of KLH?'; handleInputChange(); document.getElementById('sendButton').click();">
+                            <!-- Glow Effect Layers -->
+                            <div class="glow-border"></div>
+                            <div class="glow-blur"></div>
+                            <!-- Inner Content Card -->
+                            <div class="fact-card-content">
+                                <div class="fact-icon fact-icon-purple">
+                                    <span>#</span>
+                                </div>
+                                <div class="fact-text">
+                                    <h3>Rankings</h3>
+                                    <p>Top-ranked institution in India for excellence.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Programs -->
+                        <div class="fact-card-wrapper"
+                            onclick="document.getElementById('messageInput').value='What programs are offered at KLH?'; handleInputChange(); document.getElementById('sendButton').click();">
+                            <!-- Glow Effect Layers -->
+                            <div class="glow-border"></div>
+                            <div class="glow-blur"></div>
+                            <!-- Inner Content Card -->
+                            <div class="fact-card-content">
+                                <div class="fact-icon fact-icon-orange">
+                                    <span>≡</span>
+                                </div>
+                                <div class="fact-text">
+                                    <h3>Programs</h3>
+                                    <p>Engineering, Management, Arts, Science, and more.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Container -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be added here -->
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                            <path d="M2 17l10 5 10-5" />
+                            <path d="M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <div class="typing-content">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="typing-text">Searching KLH website...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Input (shows when chat started) -->
+            <div class="fixed-input-area" id="fixedInputArea">
+                <div class="fixed-input-container">
+                    <div class="input-box">
+                        <textarea id="messageInputFixed" class="message-input"
+                            placeholder="Ask anything about KLH University..." rows="1" autocomplete="off"></textarea>
+                    </div>
+                    <div class="input-actions">
+                        <div class="input-actions-left">
+                            <button class="action-icon-btn" title="Attach file">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="input-actions-right">
+                            <!-- Mode Selector (Fast/Thinking) -->
+                            <div class="mode-selector" id="modeSelectorFixed">
+                                <button class="mode-selector-btn" id="modeSelectorBtnFixed">
+                                    <span class="mode-name" id="selectedModeNameFixed">Fast</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        width="14" height="14">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </button>
+                                <div class="mode-dropdown" id="modeDropdownFixed">
+                                    <div class="mode-option active" data-mode="fast">
+                                        <span class="mode-option-name">Fast</span>
+                                        <span class="mode-option-desc">University Data</span>
+                                    </div>
+                                    <div class="mode-option" data-mode="thinking">
+                                        <span class="mode-option-name">Thinking</span>
+                                        <span class="mode-option-desc">Web Search</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Model Selector (synced with main) -->
+                            <div class="model-selector" id="modelSelectorFixed">
+                                <button class="model-selector-btn" id="modelSelectorBtnFixed">
+                                    <img id="selectedModelLogoFixed" class="provider-img selected-model-logo" alt="" hidden>
+                                    <span class="model-name" id="selectedModelNameFixed">Mistral Small (Cloudflare)</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        width="14" height="14">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </button>
+                                <div class="model-dropdown" id="modelDropdownFixed">
+                                    <!-- Search Input -->
+                                    <div class="model-search-container">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                        <input type="text" id="modelSearchInputFixed" class="model-search-input"
+                                            placeholder="Search model..." autocomplete="off">
+                                    </div>
+
+                                    <!-- Categories -->
+                                    <div class="model-list" id="modelListFixed">
+<div class="model-option-fixed" data-model="cloudflare" data-name="Mistral Small (Cloudflare)">
+                                                <span class="model-option-fixed-name">Mistral Small (Cloudflare)</span>
+                                                <span class="model-option-fixed-desc">Cloudflare Workers AI</span>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="send-button" id="sendButtonFixed" aria-label="Send message">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 19V5M5 12l7-7 7 7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <script src="script.v2.js?t=1768131203"></script>
+    <script src="voice.js"></script>
+    <script src="scrolly.js?v=vapi-after-intro-307"></script>
+</body>
+
+</html>

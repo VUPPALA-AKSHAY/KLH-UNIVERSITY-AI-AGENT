@@ -1,0 +1,22 @@
+# Model Changes Log
+
+## ❌ Removed Models
+The following models have been removed from the list to reduce clutter:
+
+1.  **GPT-5.2 Pro (Dec 11)** (Snapshot)
+2.  **GPT-5.1 Codex Mini**
+3.  **GPT-5.1 (Nov 13)** (Previous Gen) 
+
+## ✅ Kept Models (Active Lineup)
+The current active models in the "OpenAI" category are:
+
+1.  **GPT-5.2 Chat** (Recommended)
+    - *Best for general chat and speed.*
+2.  **GPT-5.2 Pro**
+    - *High performance for complex tasks.*
+3.  **GPT-5.2**
+    - *Base foundational model.*
+4.  **GPT-5.1**
+    - *Standard previous version.*
+5.  **GPT-5.1 Codex**
+    - *Specialized for coding tasks.*

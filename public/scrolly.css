@@ -1,0 +1,248 @@
+/* =============================================
+   SCROLLY INTRO — GPU Canvas Frame Animation
+   ============================================= */
+
+/* Tall spacer that drives the scroll */
+#sc-spacer {
+    height: 800vh;
+    width: 100%;
+    position: relative;
+}
+
+/* Fixed canvas wrapper — always fills viewport during intro */
+#sc-wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: #FAFAFA;
+    transition: opacity 0.7s ease;
+    will-change: opacity;
+}
+
+[data-theme="dark"] #sc-wrapper {
+    background: #0a0a0a;
+}
+
+/* The WebGL render target */
+#sc-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ── Loading Overlay ───────────────────────── */
+#sc-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FAFAFA;
+    z-index: 10;
+    gap: 32px;
+    transition: opacity 0.8s ease;
+}
+
+[data-theme="dark"] #sc-loader {
+    background: #0a0a0a;
+}
+
+.sc-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff;
+    padding: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    animation: sc-pulse 2.4s ease-in-out infinite;
+}
+
+[data-theme="dark"] .sc-logo {
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.04);
+}
+
+@keyframes sc-pulse {
+    0%, 100% { transform: scale(1);    opacity: 1;   }
+    50%       { transform: scale(1.06); opacity: 0.85; }
+}
+
+.sc-loader-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #aaa;
+}
+
+[data-theme="dark"] .sc-loader-label {
+    color: #555;
+}
+
+.sc-track {
+    width: 240px;
+    height: 1.5px;
+    background: #e8e8e8;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .sc-track {
+    background: #222;
+}
+
+#sc-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #444 0%, #111 100%);
+    border-radius: 2px;
+    transition: width 0.15s linear;
+    will-change: width;
+}
+
+[data-theme="dark"] #sc-bar {
+    background: linear-gradient(90deg, #888 0%, #fff 100%);
+}
+
+#sc-pct {
+    font-family: 'Plus Jakarta Sans', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: #bbb;
+    min-width: 40px;
+    text-align: center;
+}
+
+[data-theme="dark"] #sc-pct {
+    color: #444;
+}
+
+/* ── Scroll Hint ───────────────────────────── */
+#sc-hint {
+    position: absolute;
+    bottom: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+    user-select: none;
+    z-index: 12;
+}
+
+.sc-hint-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(22, 22, 22, 0.72);
+    line-height: 1;
+    text-shadow: 0 1px 10px rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .sc-hint-text {
+    color: rgba(22, 22, 22, 0.72);
+}
+
+.sc-arrow-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.sc-arrow {
+    width: 16px;
+    height: 16px;
+    border-right: 1.8px solid rgba(22, 22, 22, 0.62);
+    border-bottom: 1.8px solid rgba(22, 22, 22, 0.62);
+    transform: rotate(45deg);
+    animation: sc-bounce 1.8s ease-in-out infinite;
+    filter: drop-shadow(0 1px 8px rgba(255, 255, 255, 0.9));
+}
+
+[data-theme="dark"] .sc-arrow {
+    border-color: rgba(22, 22, 22, 0.62);
+}
+
+.sc-arrow:nth-child(2),
+.sc-arrow:nth-child(3) {
+    display: none;
+}
+
+@keyframes sc-bounce {
+    0%, 100% { transform: rotate(45deg) translate(0,    0);    opacity: 1;   }
+    50%       { transform: rotate(45deg) translate(3px, 3px);  opacity: 0.4; }
+}
+
+/* ── Skip Button ───────────────────────────── */
+#sc-skip {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    padding: 8px 18px;
+    background: rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#sc-skip.ready {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+[data-theme="dark"] #sc-skip {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.4);
+}
+
+#sc-skip:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] #sc-skip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Progress strip at top ─────────────────── */
+#sc-progress-strip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: rgba(0, 0, 0, 0.15);
+    transition: none;
+    will-change: width;
+    z-index: 11;
+}
+
+[data-theme="dark"] #sc-progress-strip {
+    background: rgba(255, 255, 255, 0.2);
+}
