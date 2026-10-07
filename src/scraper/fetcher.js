@@ -54,17 +54,24 @@ async function runScraplingRemote(urls, baseUrl) {
     const endpoint = `${base}/api/scrape`;
     console.log(`Calling Scrapling function: ${endpoint}`);
 
+    const headers = { 'Content-Type': 'application/json' };
+    const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+    if (bypass) {
+        headers['x-vercel-protection-bypass'] = bypass;
+        headers['x-vercel-set-bypass-cookie'] = 'true';
+    }
+
     const response = await axios.post(endpoint, { urls }, {
         timeout: SCRAPLING_PROCESS_TIMEOUT_MS,
         maxBodyLength: Infinity,
-        headers: { 'Content-Type': 'application/json' }
+        headers
     });
 
     return response.data;
 }
 
 function selfUrl() {
-    const configured = process.env.SCRAPER_URL || process.env.VERCEL_URL;
+    const configured = process.env.SCRAPER_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
     if (!configured) {
         throw new Error('VERCEL_URL is not set; cannot reach the Scrapling function');
     }
