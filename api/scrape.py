@@ -68,11 +68,14 @@ def scrape(urls):
 
 
 @app.get("/health")
+@app.get("/api/scrape/health")
 def health():
     return {"ok": True, "service": "scrapling-scraper", "timeout_ms": TIMEOUT_MS}
 
 
-@app.post("/")
+@app.api_route("/", methods=["POST"])
+@app.api_route("/api/scrape", methods=["POST"])
+@app.api_route("/{full_path:path}", methods=["POST"])
 async def handle(request: Request):
     try:
         body = await request.json()
