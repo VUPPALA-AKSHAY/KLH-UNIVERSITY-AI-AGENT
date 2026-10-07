@@ -2,5 +2,7 @@ scrapling
 curl_cffi
 playwright
 patchright
+browserforge
+msgspec
 fastapi
 uvicorn
