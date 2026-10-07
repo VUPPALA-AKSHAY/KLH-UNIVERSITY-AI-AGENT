@@ -32,13 +32,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-if (!process.env.VERCEL) {
-    app.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`
+    ╔═════════════════════════
     🎓 KLH Smart AI Assistant is running!         
     🌐 URL: http://localhost:${PORT}                 
-    🤖 Powered by Cloudflare AI  
+    🤖 Powered by Google Gemini AI  
     `);
 });
-}
-module.exports = app;
