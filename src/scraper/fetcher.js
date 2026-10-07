@@ -10,6 +10,12 @@ const SCRAPLING_HELPER = path.join(__dirname, 'scrapling_fetcher.py');
 const SCRAPLING_PROCESS_TIMEOUT_MS = Number.parseInt(process.env.SCRAPLING_PROCESS_TIMEOUT_MS, 10) || 120000;
 
 function runScrapling(urls) {
+    // If a remote Scrapling service is configured (e.g. a small Python service
+    // on the VPS), use it. Vercel's own Node runtime cannot run Scrapling.
+    if (process.env.SCRAPER_URL) {
+        return runScraplingRemote(urls, process.env.SCRAPER_URL);
+    }
+
     return new Promise((resolve, reject) => {
         execFile(PYTHON_COMMAND, [SCRAPLING_HELPER, ...urls], {
             timeout: SCRAPLING_PROCESS_TIMEOUT_MS,
@@ -34,6 +40,22 @@ function runScrapling(urls) {
             }
         });
     });
+}
+
+async function runScraplingRemote(urls, baseUrl) {
+    const axios = require('axios');
+
+    const base = String(baseUrl).replace(/\/$/, '');
+    const endpoint = base.startsWith('http') ? base : `https://${base}`;
+    console.log(`Calling remote Scrapling service: ${endpoint}`);
+
+    const response = await axios.post(endpoint, { urls }, {
+        timeout: SCRAPLING_PROCESS_TIMEOUT_MS,
+        maxBodyLength: Infinity,
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    return response.data;
 }
 
 /**
