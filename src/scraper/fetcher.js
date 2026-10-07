@@ -64,15 +64,54 @@ async function fetchMultiplePages(urls) {
     }
 
     console.log(`Scrapling scraping ${uniqueUrls.length} URL(s)`);
-    const payload = await runScrapling(uniqueUrls);
 
-    if (Array.isArray(payload.errors)) {
-        for (const item of payload.errors) {
-            console.error(`Failed to fetch a page: ${item.url} - ${item.error}`);
+    try {
+        const payload = await runScrapling(uniqueUrls);
+
+        if (Array.isArray(payload.errors)) {
+            for (const item of payload.errors) {
+                console.error(`Failed to fetch a page: ${item.url} - ${item.error}`);
+            }
+        }
+
+        const results = Array.isArray(payload.results) ? payload.results : [];
+        if (results.length > 0) {
+            return results;
+        }
+
+        console.log('Scrapling returned no pages, falling back to direct fetch');
+    } catch (error) {
+        console.error(`Scrapling unavailable (${error.message}), falling back to direct fetch`);
+    }
+
+    return fetchWithAxios(uniqueUrls);
+}
+
+async function fetchWithAxios(urls) {
+    const axios = require('axios');
+    const results = [];
+
+    for (const url of urls) {
+        try {
+            const response = await axios.get(url, {
+                timeout: 20000,
+                responseType: 'text',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Language': 'en-US,en;q=0.9'
+                },
+                maxRedirects: 5,
+                validateStatus: (status) => status >= 200 && status < 400
+            });
+            results.push({ url, html: response.data });
+            console.log(`Fetched ${url} (${String(response.data || '').length} chars)`);
+        } catch (error) {
+            console.error(`Failed to fetch ${url}: ${error.message}`);
         }
     }
 
-    return Array.isArray(payload.results) ? payload.results : [];
+    return results;
 }
 
 module.exports = { fetchPage, fetchMultiplePages };
